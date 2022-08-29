@@ -1,46 +1,64 @@
-require("dotenv").config()
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-require('dotenv').config()
-var indexRouter = require('./src/routes/index');
-var usersRouter = require('./src/routes/users');
+let express = require ('express');
+let logger = require ('morgan');
+let fs = require ('fs');
 
-var app = express();
+const fetch = (...args) =>
+  import ('node-fetch').then (({default: fetch}) => fetch (...args));
 
+let app = express ();
 
+app.use (logger ('dev'));
+app.use (express.json ());
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+let home_handeler = (req, res) => {
+  res.json ({
+    message: 'hello',
+  });
+};
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+// get API
+let getApi_handeler = async (req, res) => {
+  const response = await fetch ('https://pokeapi.co/api/v2/pokemon/ditto');
+  if (response.ok) {
+    try {
+      const data = await response.json ();
+      res.json (data);
+    } catch (err) {
+      console.log (err);
+    }
+  }
+};
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+// endpoint user
+let user_handeler = (req, res, next) => {
+  fs.readFile ('data/users.json', 'utf8', (err, data) => {
+    if (err) {
+      next (err);
+    }
+    res.json (data);
+  });
+};
+// endpoint comment
+let comment_handeler = (req, res, next) => {
+  fs.readFile ('data/comments.json', 'utf8', (err, data) => {
+    if (err) {
+      next (err);
+    }
+    res.json (data);
+  });
+};
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
-});
+// handler error
+let error_handler = (err, req, res, next) => {
+  res.status (500).json ({
+    message: err.message,
+  });
+};
 
-// error handler
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  console.log(err)
-  res.status(500).json({
-    message : "IR"
-  })
-});
+app.use (error_handler);
+app.use ('/user', user_handeler);
+app.get ('/pokemon', getApi_handeler);
+app.get ('/comment', comment_handeler);
+app.use ('/', home_handeler);
 
 module.exports = app;
