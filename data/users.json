@@ -1,15 +1,1 @@
-[
-    {
-        "name": "trieu",
-       "address":" Ha Noi"
-    },
-    {
-        "name": "trieu",
-       "address":" Ha Noi"
-    },
-    {
-        "name": "trieu",
-       "address":" Ha Noi"
-    }
-    
-]
+[{"id":"4","name":"Huong","address":"Đinh Cong"}]
