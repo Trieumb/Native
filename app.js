@@ -9,8 +9,9 @@ app.use (logger ('dev'));
 app.use (main);
 
 let error_handler = (err, req, res, next) => {
-  res.json ({
-    message: err.message,
+  console.error (err);
+  res.status (500).json ({
+    detail: err.message,
   });
 };
 app.use (error_handler);
