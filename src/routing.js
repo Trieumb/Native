@@ -21,11 +21,11 @@ let mw = (req, res, next) => {
 mainRouter.post ('/sign-up', createUser); // dang ky
 mainRouter.post ('/sign-in', authenticateUser); // dang nhap
 mainRouter.get ('/user', mw, getUser);
-mainRouter.get ('/user/:id', getUserById);
+// mainRouter.get ('/user/:id', getUserById);
 mainRouter.get ('/user/:name', getUserByName);
 // mainRouter.post ('/user', createUser);
 mainRouter.put ('/user', extractAuthenticationInfo, updateUserInformation);
-mainRouter.delete ('/user/:id', deleteUser);
+mainRouter.delete ('/user/:email', deleteUser);
 mainRouter.use (HTTPErorrHandler);
 
 module.exports = mainRouter;
